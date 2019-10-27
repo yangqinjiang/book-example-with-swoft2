@@ -59,7 +59,7 @@
         <div class="row">
         <div class="col-md-12">
             <div class="page-header">
-                 <small>yangqinjiang@qq.com</small>
+                 <small> <a href="mailto:yangqinjiang@qq.com">yangqinjiang@qq.com</a> </small>
             </div>
         </div>
     </div>

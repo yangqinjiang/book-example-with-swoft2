@@ -9,8 +9,10 @@ services:
       - APP_ENV=dev
       - TIMEZONE=Asia/Shanghai
     restart: always
-    # depends_on:
-    #   # - mysql
+    links:
+      - "mysql"
+    depends_on:
+      - "mysql"
     ports:
       - "18306:18306"
       - "18307:18307"
@@ -18,15 +20,25 @@ services:
     volumes:
       - ./:/var/www/swoft
     command: sh run.sh #运行命令,覆盖了dockerfile的CMD
+    networks:
+        - book_net
 
+  mysql:
+    image: mysql
+    container_name: library-on-mysql-srv
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    expose:
+      - "3306"
+    volumes:
+      - ./runtime/data/mysql:/var/lib/mysql
+    restart: always
+    networks:
+      - book_net
+          # # 固定子网ip，网段必须在子网络10.10.*.*
+          # ipv4_address: 10.10.10.1
 
-  # mysql:
-  #   image: mysql
-  #   container_name: mysql-srv
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=123456
-  #   ports:
-  #     - "13306:3306"
-  #   volumes:
-  #     - ./runtime/data/mysql:/var/lib/mysql
-  #   restart: always
+networks:
+    # 配置docker network
+    book_net:

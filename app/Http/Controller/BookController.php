@@ -6,12 +6,35 @@ use Swoft\Http\Server\Annotation\Mapping\Controller;
 use Swoft\Http\Server\Annotation\Mapping\RequestMapping;
 use Swoft\Http\Server\Annotation\Mapping\RequestMethod;
 use Swoft\Http\Message\Response;
+use Swoft\Db\DB;
 
 /**
  * @Controller(prefix="/v1/book")
  */
 class BookController
 {
+        /**
+     * @RequestMapping(route="create_db",method=RequestMethod::GET)
+     * @param Response  $response
+     * @return Response
+     */
+    public function create_db() : Response{
+        //建数据库，该命令的作用：
+            //  1. 如果数据库不存在则创建，存在则不创建。
+            //  2. 创建RUNOOB数据库，并设定编码集为utf8
+        //CREATE DATABASE IF NOT EXISTS BOOKS DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+
+        //创建表
+        $sql = "CREATE TABLE IF NOT EXISTS `book`(
+            `id` INT UNSIGNED AUTO_INCREMENT,
+            `title` VARCHAR(100) NOT NULL,
+            `author` VARCHAR(100) NOT NULL,
+            `pages` INT UNSIGNED default 0,
+            `publiser` VARCHAR(100) NOT NULL,
+            `publis_time` DATE,
+            PRIMARY KEY ( `id` )
+         )ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+    }
     /**
      * @RequestMapping(route="list",method=RequestMethod::GET)
      * @param Response  $response
@@ -28,7 +51,8 @@ class BookController
             ["id"=>5,"title"=>"书名5","author"=>"作者5","pages"=>"5","publiser"=>"出版社5","publis_time"=>date('Y-m-d')],
 
         ];
-        return $response->withData( ['errno'=>0 , 'data'=>$data]  );
+        $books = DB::select('select * from `book`;');
+        return $response->withData( ['errno'=>0 , 'data'=>$data,'books'=>$books]  );
     }
 
      /**
