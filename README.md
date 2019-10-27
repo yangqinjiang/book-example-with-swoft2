@@ -1,8 +1,9 @@
 # 运行方式
 ## 前提: docker 19+, Compose 1.24+
 - `在当前目录下, 在终端上运行docker-compose up, 第一次运行,因为要下载依赖,可能比较慢`
-- `导入数据库的原始数据  sh init_db.sh`
+- `导入数据库的原始数据  sh init_db.sh , TODO: 基于 mysql:5.6.46 ,编译一个docker镜像,带导入初始化数据的功能`
 - `关闭 docker-compose down`
+
 ```运行日志
 (base) ➜  book docker-compose up
 WARNING: The Docker Engine you're using is running in swarm mode.
