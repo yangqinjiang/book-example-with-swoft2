@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>一个简单的书籍管理系统 -- 基于swoft Framework 2.0 的开发</title>
+    <title>简单的书籍管理系统 -- 基于swoft Framework 2.0 的开发</title>
     <!-- bootstrap + jquery -->
 
     <!-- vuejs  , reactjs , angular -->
@@ -25,7 +25,7 @@
     <!-- 功能按钮 -->
     <div class="row">
         <div class="col-md-12">
-            <button type="button" class="btn btn-primary" id="new-job">增加新书籍</button>
+            <button type="button" class="btn btn-primary" id="new-book">增加新书籍</button>
             
         </div>
     </div>
@@ -54,6 +54,15 @@
             </div>
         </div>
     </div>
+
+        <!-- 页头 -->
+        <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                 <small>yangqinjiang@qq.com</small>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- position: fixed -->
@@ -62,10 +71,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">增加新书籍</h4>
+                <h4 class="modal-title edit-book-title">增加新书籍</h4>
             </div>
             <div class="modal-body">
                 <form>
+                <input type="hidden"  id="edit-id" value=0>
                     <div class="form-group">
                         <label for="edit-title">书名</label>
                         <input type="text" class="form-control" id="edit-title" placeholder="书名">
@@ -91,66 +101,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" class="btn btn-primary" id="save-book">保存</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!--  日志模态框 -->
-<div id="log-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">任务日志</h4>
-            </div>
-            <div class="modal-body">
-                <table id="log-list" class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>shell命令</th>
-                        <th>错误原因</th>
-                        <th>脚本输出</th>
-                        <th>计划开始时间</th>
-                        <th>实际调度时间</th>
-                        <th>开始执行时间</th>
-                        <th>执行结束时间</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!--  健康节点模态框 -->
-<div id="worker-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">健康节点</h4>
-            </div>
-            <div class="modal-body">
-                <table id="worker-list" class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>节点IP</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -185,18 +135,24 @@
         // 用javascript委托机制, DOM事件冒泡的一个关键原理
 
         // 编辑任务
-        $("#book-list").on("click", ".edit-job", function(event) {
-            // 取当前job的信息，赋值给模态框的input
-            $('#edit-title').val($(this).parents('tr').children('.job-name').text())
-            $('#edit-author').val($(this).parents('tr').children('.job-command').text())
-            $('#edit-pages').val($(this).parents('tr').children('.job-cronExpr').text())
-            $('#edit-publiser').val($(this).parents('tr').children('.job-cronExpr').text())
-            $('#edit-publis_time').val($(this).parents('tr').children('.job-cronExpr').text())
+        $("#book-list").on("click", ".edit-book", function(event) {
+            // 取当前book的信息，赋值给模态框的input
+            var tr = $(this).parents('tr');
+            $('#edit-id').val(tr.children('.book-id').text())
+            $('#edit-title').val(tr.children('.book-title').text())
+            $('#edit-author').val(tr.children('.book-author').text())
+            $('#edit-pages').val(tr.children('.book-pages').text())
+            $('#edit-publiser').val(tr.children('.book-publiser').text())
+            $('#edit-publis_time').val(tr.children('.book-publis_time').text())
             // 弹出模态框
+            $('.edit-book-title').html("编辑书籍")
             $('#edit-modal').modal('show')
         })
         // 删除书籍
-        $("#book-list").on("click", ".delete-job", function(event) { // javascript bind
+        $("#book-list").on("click", ".delete-book", function(event) { // javascript bind
+            if (!confirm("确定删除此书籍?")){
+                return
+            }
             var bookId = $(this).parents("tr").children(".book-id").text()
             $.ajax({
                 url: '/v1/book/delete',
@@ -211,6 +167,7 @@
         // 保存
         $('#save-book').on('click', function() {
             var bookInfo = {
+              id: $('#edit-id').val(),
               title: $('#edit-title').val(),
               author: $('#edit-author').val(),
               pages: $('#edit-pages').val(), 
@@ -226,12 +183,23 @@
                     window.location.reload()
                 }
             })
+        });
+        // 新建任务
+        $('#new-book').on('click', function() {
+            $('#edit-id').val(0)
+            $('#edit-title').val("")
+            $('#edit-author').val("")
+            $('#edit-pages').val("")
+            $('#edit-publiser').val("")
+            $('#edit-publis_time').val("")
+            $('.edit-book-title').html("增加新书籍")
+            $('#edit-modal').modal('show')
         })
  
 
         // 2，定义一个函数，用于刷新任务列表
         function rebuildJobList() {
-            // /job/list
+            // 
             $.ajax({
                 url: '/v1/book/list',
                 dataType: 'json',
@@ -241,23 +209,23 @@
                         return
                     }
                     // 任务数组
-                    var jobList = resp.data
+                    var List = resp.data
                     // 清理列表
                     $('#job-list tbody').empty()
                     // 遍历任务, 填充table
-                    for (var i = 0; i < jobList.length; ++i) {
-                        var job = jobList[i];
+                    for (var i = 0; i < List.length; ++i) {
+                        var item = List[i];
                         var tr = $("<tr>")
-                        tr.append($('<td class="job-command book-id">').html(job.id))
+                        tr.append($('<td class="book-id">').html(item.id))
                         
-                        tr.append($('<td class="job-command">').html(job.title))
-                        tr.append($('<td class="job-cronExpr">').html(job.author))
-                        tr.append($('<td class="job-cronExpr">').html(job.pages))
-                        tr.append($('<td class="job-cronExpr">').html(job.publiser))
-                        tr.append($('<td class="job-cronExpr">').html( job.publis_time ) )
+                        tr.append($('<td class="book-title">').html(item.title))
+                        tr.append($('<td class="book-author">').html(item.author))
+                        tr.append($('<td class="book-pages">').html(parseInt(item.pages)))
+                        tr.append($('<td class="book-publiser">').html(item.publiser))
+                        tr.append($('<td class="book-publis_time">').html( item.publis_time ) )
                         var toolbar = $('<div class="btn-toolbar">')
-                                .append('<button class="btn btn-info edit-job">编辑</button>')
-                                .append('<button class="btn btn-danger delete-job">删除</button>');
+                                .append('<button class="btn btn-info edit-book">编辑</button>')
+                                .append('<button class="btn btn-danger delete-book">删除</button>');
                         tr.append($('<td>').append(toolbar))
                         $("#book-list tbody").append(tr)
                     }
