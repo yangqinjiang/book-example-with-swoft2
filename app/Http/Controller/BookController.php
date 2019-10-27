@@ -5,8 +5,10 @@ namespace App\Http\Controller;
 use Swoft\Http\Server\Annotation\Mapping\Controller;
 use Swoft\Http\Server\Annotation\Mapping\RequestMapping;
 use Swoft\Http\Server\Annotation\Mapping\RequestMethod;
+use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
 use Swoft\Db\DB;
+use App\Model\Entity\Book;
 
 /**
  * @Controller(prefix="/v1/book")
@@ -60,12 +62,37 @@ class BookController
      * @param Response  $response
      * @return Response
      */
-    public function save(  Response $response) : Response{
-        //form data:
-            //{"id":"0","title":"1","author":"1","pages":"1","publiser":"1","publis_time":"2019-10-11"}
-        //数组
-        //TODO:保存数据 post.book
-        return $response->withData( ['errno'=>0 ]  );
+    public function save( Request $request, Response $response) : Response{
+        //id=0&title=&author=&pages=&publiser=&publis_time=
+        $data = $request->post();
+        $id = intval($request->post('id', 0));
+        $title = $request->post('title', '-');
+        $author = $request->post('author', '-');
+        $publiser = $request->post('publiser', '-');
+        $publis_time = $request->post('publis_time', '-');
+        $pages = intval($request->post('pages', 0));
+
+        if( empty($id)){
+            //增加
+            $book = Book::new();
+            $book->setTitle($title);
+            $book->setAuthor($author);
+            $book->setPubliser($publiser);
+            $book->setPublisTime($publis_time);
+            $book->setPages($pages);
+            $book->save();
+        }else{
+            //修改
+            $book = Book::find($id);
+            $book->setTitle($title);
+            $book->setAuthor($author);
+            $book->setPubliser($publiser);
+            $book->setPublisTime($publis_time);
+            $book->setPages($pages);
+            $book->update();
+        }
+          
+        return $response->withData( ['errno'=>0,'input'=>$data ]  );
     }
 
     //
@@ -74,11 +101,14 @@ class BookController
      * @param Response  $response
      * @return Response
      */
-    public function delete(  Response $response) : Response{
-        //form data:
-         // id: 1
-        //数组
-        //TODO:保存数据 post.book
+    public function delete(  Request $request,Response $response) : Response{
+        // input id
+        $data = $request->post();
+        $id = intval($request->post('id', 0));
+        if ($id > 0){
+            Book::where('id',$id )->limit(1)->delete();
+        }
+        
         return $response->withData( ['errno'=>0 ]  );
     }
 }

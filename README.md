@@ -1,6 +1,8 @@
 # 运行方式
 ## 前提: docker 19+, Compose 1.24+
 - `在当前目录下, 在终端上运行docker-compose up, 第一次运行,因为要下载依赖,可能比较慢`
+- `导入数据库的原始数据  sh init_db.sh`
+- `关闭 docker-compose down`
 ```运行日志
 (base) ➜  book docker-compose up
 WARNING: The Docker Engine you're using is running in swarm mode.
@@ -76,3 +78,8 @@ swoft-srv | Server start success (Master PID: 379, Manager PID: 382)
 ```
 
 - `在浏览器上打开 http://localhost:18306/`
+
+
+
+# 导入sql文件
+`docker exec -i library-on-mysql-srv sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD"' < books.sql`

@@ -160,7 +160,7 @@
                 dataType: 'json',
                 data: {id: bookId},
                 complete: function() {
-                    window.location.reload()
+                    rebuildJobList();
                 }
             })
         }) 
@@ -174,13 +174,15 @@
               publiser: $('#edit-publiser').val(), 
               publis_time: $('#edit-publis_time').val()
               }
+              //判断是否为空值
             $.ajax({
                 url: '/v1/book/save',
                 type: 'post',
                 dataType: 'json',
-                data: {book: JSON.stringify(bookInfo)},
+                data: bookInfo,
                 complete: function() {
-                    window.location.reload()
+                    $('#edit-modal').modal('hide');
+                    rebuildJobList();
                 }
             })
         });
@@ -211,7 +213,7 @@
                     // 任务数组
                     var List = resp.data
                     // 清理列表
-                    $('#job-list tbody').empty()
+                    $('#book-list tbody').empty()
                     // 遍历任务, 填充table
                     for (var i = 0; i < List.length; ++i) {
                         var item = List[i];

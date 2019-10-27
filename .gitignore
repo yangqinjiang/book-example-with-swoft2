@@ -2,5 +2,6 @@ vendor
 runtime
 mysqldata
 runtime/data/mysql
-runtime/data/mysql_5.6.x
+runtime/data/mysql56
 runtime/swoft.pid
+.idea
