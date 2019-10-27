@@ -31,7 +31,7 @@ services:
     expose:
       - "3306"
     volumes:
-      - ./mysqldata:/var/lib/mysql
+      - ./runtime/data/mysql56:/var/lib/mysql
     restart: always
     networks:
       - book_net

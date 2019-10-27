@@ -53,9 +53,9 @@ return [
         ],
         /* @see HttpServer::$setting */
         'setting' => [
-            'task_worker_num'       => 12,
+            'task_worker_num'       => 1,
             'task_enable_coroutine' => true,
-            'worker_num'            => 6
+            'worker_num'            => 1
         ]
     ],
     'httpDispatcher'    => [

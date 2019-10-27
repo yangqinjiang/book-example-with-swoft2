@@ -34,6 +34,15 @@ class BookController
             `publis_time` DATE,
             PRIMARY KEY ( `id` )
          )ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+
+         //插入一条数据
+         /*
+         insert into book values(1,"书名1","作者1",100,"出版社1","2021-2-2");
+         insert into book values(2,"书名2","作者2",200,"出版社2","2022-2-2");
+         insert into book values(3,"书名3","作者3",300,"出版社3","2023-2-2");
+         insert into book values(4,"书名4","作者4",400,"出版社4","2024-2-2");
+         insert into book values(5,"书名5","作者5",500,"出版社5","2025-2-2");
+         */
     }
     /**
      * @RequestMapping(route="list",method=RequestMethod::GET)
@@ -42,17 +51,8 @@ class BookController
      */
     public function index( Response $response) : Response{
         
-        //数组
-        $data = [
-            ["id"=>1,"title"=>"书名1","author"=>"作者1","pages"=>"1","publiser"=>"出版社1","publis_time"=>date('Y-m-d')],
-            ["id"=>2,"title"=>"书名2","author"=>"作者2","pages"=>"2","publiser"=>"出版社2","publis_time"=>date('Y-m-d')],
-            ["id"=>3,"title"=>"书名3","author"=>"作者3","pages"=>"3","publiser"=>"出版社3","publis_time"=>date('Y-m-d')],
-            ["id"=>4,"title"=>"书名4","author"=>"作者4","pages"=>"4","publiser"=>"出版社4","publis_time"=>date('Y-m-d')],
-            ["id"=>5,"title"=>"书名5","author"=>"作者5","pages"=>"5","publiser"=>"出版社5","publis_time"=>date('Y-m-d')],
-
-        ];
-        $books = DB::select('select * from `book`;');
-        return $response->withData( ['errno'=>0 , 'data'=>$data,'books'=>$books]  );
+        $books = DB::select('select id,title,author,pages,publiser,publis_time from `book`;');
+        return $response->withData( ['errno'=>0 , 'data'=>$books]  );
     }
 
      /**

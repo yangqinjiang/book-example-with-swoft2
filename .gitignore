@@ -2,3 +2,4 @@ vendor
 runtime
 mysqldata
 runtime/data/mysql
+runtime/data/mysql_5.6.x
