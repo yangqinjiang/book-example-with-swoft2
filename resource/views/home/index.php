@@ -25,8 +25,8 @@
     <!-- 功能按钮 -->
     <div class="row">
         <div class="col-md-12">
-            <button type="button" class="btn btn-primary" id="new-job">新建任务</button>
-            <button type="button" class="btn btn-success" id="list-worker">健康节点</button>
+            <button type="button" class="btn btn-primary" id="new-job">增加新书籍</button>
+            
         </div>
     </div>
 
@@ -38,11 +38,13 @@
                     <table id="book-list"  class="table table-striped">
                         <thead>
                         <tr>
+                            <th>书名ID</th>
                             <th>书名</th>
                             <th>作者</th>
                             <th>页数</th>
                             <th>出版社</th>
                             <th>出版时间</th>
+                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -60,27 +62,35 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">编辑任务</h4>
+                <h4 class="modal-title">增加新书籍</h4>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="edit-name">任务名称</label>
-                        <input type="text" class="form-control" id="edit-name" placeholder="任务名称">
+                        <label for="edit-title">书名</label>
+                        <input type="text" class="form-control" id="edit-title" placeholder="书名">
                     </div>
                     <div class="form-group">
-                        <label for="edit-command">shell命令</label>
-                        <input type="text" class="form-control" id="edit-command" placeholder="shell命令">
+                        <label for="edit-author">作者</label>
+                        <input type="text" class="form-control" id="edit-author" placeholder="作者">
                     </div>
                     <div class="form-group">
-                        <label for="edit-cronExpr">cron表达式</label>
-                        <input type="text" class="form-control" id="edit-cronExpr" placeholder="cron表达式">
+                        <label for="edit-pages">页数</label>
+                        <input type="number" class="form-control" id="edit-pages" placeholder="页数">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-publiser">出版社</label>
+                        <input type="text" class="form-control" id="edit-publiser" placeholder="出版社">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-publis_time">出版时间</label>
+                        <input type="date" class="form-control" id="edit-publis_time" placeholder="出版时间">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="save-job">保存</button>
+                <button type="button" class="btn btn-primary" id="save-book">保存</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -160,7 +170,7 @@
                 }
                 return num
             }
-            var date = new Date(millsecond/1000000)
+            var date = new Date(millsecond)
             var year = date.getFullYear()
             var month = paddingNum(date.getMonth() + 1, 2)
             var day = paddingNum(date.getDate(), 2)
@@ -177,133 +187,53 @@
         // 编辑任务
         $("#book-list").on("click", ".edit-job", function(event) {
             // 取当前job的信息，赋值给模态框的input
-            $('#edit-name').val($(this).parents('tr').children('.job-name').text())
-            $('#edit-command').val($(this).parents('tr').children('.job-command').text())
-            $('#edit-cronExpr').val($(this).parents('tr').children('.job-cronExpr').text())
+            $('#edit-title').val($(this).parents('tr').children('.job-name').text())
+            $('#edit-author').val($(this).parents('tr').children('.job-command').text())
+            $('#edit-pages').val($(this).parents('tr').children('.job-cronExpr').text())
+            $('#edit-publiser').val($(this).parents('tr').children('.job-cronExpr').text())
+            $('#edit-publis_time').val($(this).parents('tr').children('.job-cronExpr').text())
             // 弹出模态框
             $('#edit-modal').modal('show')
         })
-        // 删除任务
+        // 删除书籍
         $("#book-list").on("click", ".delete-job", function(event) { // javascript bind
-            var jobName = $(this).parents("tr").children(".job-name").text()
+            var bookId = $(this).parents("tr").children(".book-id").text()
             $.ajax({
-                url: '/job/delete',
+                url: '/v1/book/delete',
                 type: 'post',
                 dataType: 'json',
-                data: {name: jobName},
+                data: {id: bookId},
+                complete: function() {
+                    window.location.reload()
+                }
+            })
+        }) 
+        // 保存
+        $('#save-book').on('click', function() {
+            var bookInfo = {
+              title: $('#edit-title').val(),
+              author: $('#edit-author').val(),
+              pages: $('#edit-pages').val(), 
+              publiser: $('#edit-publiser').val(), 
+              publis_time: $('#edit-publis_time').val()
+              }
+            $.ajax({
+                url: '/v1/book/save',
+                type: 'post',
+                dataType: 'json',
+                data: {book: JSON.stringify(bookInfo)},
                 complete: function() {
                     window.location.reload()
                 }
             })
         })
-        // 杀死任务
-        $("#book-list").on("click", ".kill-job", function(event) {
-            var jobName = $(this).parents("tr").children(".job-name").text()
-            $.ajax({
-                url: '/job/kill',
-                type: 'post',
-                dataType: 'json',
-                data: {name: jobName},
-                complete: function() {
-                    window.location.reload()
-                }
-            })
-        })
-        // 保存任务
-        $('#save-job').on('click', function() {
-            var jobInfo = {name: $('#edit-name').val(), command: $('#edit-command').val(), cronExpr: $('#edit-cronExpr').val()}
-            $.ajax({
-                url: '/job/save',
-                type: 'post',
-                dataType: 'json',
-                data: {job: JSON.stringify(jobInfo)},
-                complete: function() {
-                    window.location.reload()
-                }
-            })
-        })
-        // 新建任务
-        $('#new-job').on('click', function() {
-            $('#edit-name').val("")
-            $('#edit-command').val("")
-            $('#edit-cronExpr').val("")
-            $('#edit-modal').modal('show')
-        })
-        // 查看任务日志
-        $("#book-list").on("click", ".log-job", function(event) {
-            // 清空日志列表
-            $('#log-list tbody').empty()
-
-            // 获取任务名
-            var jobName = $(this).parents('tr').children('.job-name').text()
-
-            // 请求/job/log接口
-            $.ajax({
-                url: "/job/log",
-                dataType: 'json',
-                data: {name: jobName},
-                success: function(resp) {
-                    if (resp.errno != 0) {
-                        mytip(resp.msg)
-                        return
-                    }
-                    // 遍历日志
-                    var logList = resp.data
-                    for (var i = 0; i < logList.length; ++i) {
-                        var log = logList[i]
-                        var tr = $('<tr>')
-                        tr.append($('<td>').html(log.command))
-                        tr.append($('<td style="color:red;">').html(log.err))
-                        tr.append($('<td>').html(log.output))
-                        tr.append($('<td>').html(timeFormat(log.planTime)))
-                        tr.append($('<td>').html(timeFormat(log.scheduleTime)))
-                        tr.append($('<td>').html(timeFormat(log.startTime)))
-                        tr.append($('<td>').html(timeFormat(log.endTime)))
-                        console.log(tr)
-                        $('#log-list tbody').append(tr)
-                    }
-                }
-            })
-
-            // 弹出模态框
-            $('#log-modal').modal('show')
-        })
-
-        // 健康节点按钮
-        $('#list-worker').on('click', function() {
-            // 清空现有table
-            $('#worker-list tbody').empty()
-
-            // 拉取节点
-            $.ajax({
-                url: '/worker/list',
-                dataType: 'json',
-                success: function(resp) {
-                    if (resp.errno != 0) {
-                        mytip(resp.msg)
-                        return
-                    }
-
-                    var workerList = resp.data
-                    // 遍历每个IP, 添加到模态框的table中
-                    for (var i = 0; i < workerList.length; ++i) {
-                        var workerIP = workerList[i]
-                        var tr = $('<tr>')
-                        tr.append($('<td>').html(workerIP))
-                        $('#worker-list tbody').append(tr)
-                    }
-                }
-            })
-
-            // 弹出模态框
-            $('#worker-modal').modal('show')
-        })
+ 
 
         // 2，定义一个函数，用于刷新任务列表
         function rebuildJobList() {
             // /job/list
             $.ajax({
-                url: '/job/list',
+                url: '/v1/book/list',
                 dataType: 'json',
                 success: function(resp) {
                     if (resp.errno != 0) {  // 服务端出错了
@@ -318,14 +248,16 @@
                     for (var i = 0; i < jobList.length; ++i) {
                         var job = jobList[i];
                         var tr = $("<tr>")
-                        tr.append($('<td class="job-name">').html(job.name))
-                        tr.append($('<td class="job-command">').html(job.command))
-                        tr.append($('<td class="job-cronExpr">').html(job.cronExpr))
+                        tr.append($('<td class="job-command book-id">').html(job.id))
+                        
+                        tr.append($('<td class="job-command">').html(job.title))
+                        tr.append($('<td class="job-cronExpr">').html(job.author))
+                        tr.append($('<td class="job-cronExpr">').html(job.pages))
+                        tr.append($('<td class="job-cronExpr">').html(job.publiser))
+                        tr.append($('<td class="job-cronExpr">').html( job.publis_time ) )
                         var toolbar = $('<div class="btn-toolbar">')
                                 .append('<button class="btn btn-info edit-job">编辑</button>')
-                                .append('<button class="btn btn-danger delete-job">删除</button>')
-                                .append('<button class="btn btn-warning kill-job">强杀</button>')
-                                .append('<button class="btn btn-success log-job">日志</button>')
+                                .append('<button class="btn btn-danger delete-job">删除</button>');
                         tr.append($('<td>').append(toolbar))
                         $("#book-list tbody").append(tr)
                     }
@@ -333,16 +265,7 @@
             })
         }
         rebuildJobList();
-
-        function mytip(content){
-            var html = '<div id="alert" class="alert alert-danger alert-dismissible fade in" role="alert">'
-                html += '<h4>Oh  ! 发生了一个错误!</h4>';
-                html += '<p>'+content+'</p></div>'
-            $('#alert_box').append(html);
-            setTimeout(function(){
-                $('#alert').alert('close');
-            },5000)
-        }
+ 
         
     })
 </script>

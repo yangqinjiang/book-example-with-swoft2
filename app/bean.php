@@ -39,13 +39,23 @@ return [
     'httpServer'        => [
         'class'    => HttpServer::class,
         'port'     => 18306,
- 
+        'listener' => [
+            'rpc' => bean('rpcServer')
+        ],
+        'process'  => [
+//            'monitor' => bean(MonitorProcess::class)
+//            'crontab' => bean(CrontabProcess::class)
+        ],
+        'on'       => [
+//            SwooleEvent::TASK   => bean(SyncTaskListener::class),  // Enable sync task
+            SwooleEvent::TASK   => bean(TaskListener::class),  // Enable task must task and finish event
+            SwooleEvent::FINISH => bean(FinishListener::class)
+        ],
         /* @see HttpServer::$setting */
         'setting' => [
             'task_worker_num'       => 12,
             'task_enable_coroutine' => true,
-            'worker_num'            => 6,
-            'log_file' => alias('@runtime/swoole.log'),
+            'worker_num'            => 6
         ]
     ],
     'httpDispatcher'    => [
