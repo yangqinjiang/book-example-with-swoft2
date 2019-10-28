@@ -59,11 +59,11 @@ class Book extends Model
      */
     private $publiser;
     /**
-     * @Column()
+     * @Column(name="publis_time")
      *
      * @var string
      */
-    private $publis_time;
+    private $publisTime;
       
 
     /**
@@ -110,7 +110,7 @@ class Book extends Model
      */
     public function setPublisTime(string $publis_time): void
     {
-        $this->publis_time = $publis_time;
+        $this->publisTime = $publis_time;
     }
     /**
      * @param int $pages
@@ -158,7 +158,7 @@ class Book extends Model
      */
     public function getPublisTime(): string
     {
-        return $this->publis_time;
+        return $this->publisTime;
     }
     /**
      * @return int

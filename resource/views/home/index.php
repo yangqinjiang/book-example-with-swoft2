@@ -9,6 +9,8 @@
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+    .book-id{display:none;}</style>
 </head>
 <body>
 <div id="alert_box"></div>
@@ -38,7 +40,7 @@
                     <table id="book-list"  class="table table-striped">
                         <thead>
                         <tr>
-                            <th>书名ID</th>
+                            <th style="display:none;">书名ID</th>
                             <th>书名</th>
                             <th>作者</th>
                             <th>页数</th>

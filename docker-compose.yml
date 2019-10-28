@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  swoft:
+  books:
     image: swoft/swoft
     container_name: library-on-swoft-srv
     environment:
@@ -17,15 +17,21 @@ services:
       - "18308:18308"
     volumes:
       - ./:/var/www/swoft
-    command: sh swoft-run.sh #运行命令,覆盖了dockerfile的CMD
+    command: sh scripts/swoft-run.sh #运行命令,覆盖了dockerfile的CMD
     networks:
         - book_net
 
+  # 此mysql数据库不能在外部网络访问,只能在docker-compose当前提供的book_net网络内访问
+  # 即 books 容器可访问的
   mysql:
-    image: mysql:5.6.46
+    #或者使用./scripts/ImportDbToMysql/Dockerfile编译自己的镜像
+    image: mysql:5.6.46 #官方镜像
     container_name: library-on-mysql-srv
+    volumes:
+      # 初始化数据库,导入books.sql文件的数据
+      - ./scripts/ImportDbToMysql/books.sql:/docker-entrypoint-initdb.d/books.sql
     environment:
-      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_ROOT_PASSWORD=123456 #数据库密码,用户名是root
     expose:
       - "3306"
     restart: always

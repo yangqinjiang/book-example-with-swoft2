@@ -15,37 +15,7 @@ use App\Model\Entity\Book;
  */
 class BookController
 {
-        /**
-     * @RequestMapping(route="create_db",method=RequestMethod::GET)
-     * @param Response  $response
-     * @return Response
-     */
-    public function create_db() : Response{
-        //建数据库，该命令的作用：
-            //  1. 如果数据库不存在则创建，存在则不创建。
-            //  2. 创建RUNOOB数据库，并设定编码集为utf8
-        //CREATE DATABASE IF NOT EXISTS BOOKS DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
-
-        //创建表
-        $sql = "CREATE TABLE IF NOT EXISTS `book`(
-            `id` INT UNSIGNED AUTO_INCREMENT,
-            `title` VARCHAR(100) NOT NULL,
-            `author` VARCHAR(100) NOT NULL,
-            `pages` INT UNSIGNED default 0,
-            `publiser` VARCHAR(100) NOT NULL,
-            `publis_time` DATE,
-            PRIMARY KEY ( `id` )
-         )ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-
-         //插入一条数据
-         /*
-         insert into book values(1,"书名1","作者1",100,"出版社1","2021-2-2");
-         insert into book values(2,"书名2","作者2",200,"出版社2","2022-2-2");
-         insert into book values(3,"书名3","作者3",300,"出版社3","2023-2-2");
-         insert into book values(4,"书名4","作者4",400,"出版社4","2024-2-2");
-         insert into book values(5,"书名5","作者5",500,"出版社5","2025-2-2");
-         */
-    }
+    
     /**
      * @RequestMapping(route="list",method=RequestMethod::GET)
      * @param Response  $response
